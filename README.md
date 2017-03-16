@@ -1,9 +1,9 @@
 KeyBoardView
 ==================
 自定义键盘
- ![image](https://github.com/kam520c/KeyBoardView/raw/master/screenshots/num.jpg)
+ ![image](https://github.com/kam520c/KeyBoardView/raw/master/screenshots/num.png)
 
- ![image](https://github.com/kam520c/KeyBoardView/raw/master/screenshots/abc.jpg)
+ ![image](https://github.com/kam520c/KeyBoardView/raw/master/screenshots/abc.png)
 
 Gradle example
 =======
