@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="333dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_kb_abc"
+            android:layout_width="0dp"
+            android:layout_height="34dp"
+            android:layout_weight="1"
+            android:background="@drawable/selector_keyboard_type"
+            android:gravity="center"
+            android:text="abc"
+            android:textColor="@drawable/selector_keyboard_type_text"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_kb_123"
+            android:layout_width="0dp"
+            android:layout_height="34dp"
+            android:layout_weight="1"
+            android:background="@drawable/selector_keyboard_type"
+            android:gravity="center"
+            android:text="123"
+            android:textColor="@drawable/selector_keyboard_type_text"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_kb_china"
+            android:layout_width="0dp"
+            android:layout_height="34dp"
+            android:layout_weight="1"
+            android:background="@drawable/selector_keyboard_type"
+            android:gravity="center"
+            android:text="@string/tv_kb_china"
+            android:textColor="@drawable/selector_keyboard_type_text"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_kb_num"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:numColumns="3" />
+
+</RelativeLayout>
