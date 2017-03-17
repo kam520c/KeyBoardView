@@ -21,6 +21,7 @@ import com.example.kamkeyboard.adapter.KeyBoardAdapter;
 import com.example.kamkeyboard.entity.KeyBoardItem;
 import com.example.kamkeyboard.util.StringUtils;
 import com.example.kamkeyboard.util.SystemUtil;
+
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -308,6 +309,8 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
         } else if (i == R.id.tv_kb_china) {
             if (editText != null) {
                 SystemUtil.openKeyboard(editText, mContext);
+            } else {
+                SystemUtil.openKeyboard(null, mContext);
             }
 //                mTvKbAbc.setSelected(false);
 //                mTvKb123.setSelected(false);
@@ -315,6 +318,7 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
 
         }
     }
+
     private KeyBoardAdapter.OnItemClick mOnItemClick = new KeyBoardAdapter.OnItemClick() {
         @Override
         public void onClick(View v, int position) {
