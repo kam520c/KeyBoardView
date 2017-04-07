@@ -1,6 +1,8 @@
 package com.example.kamkeyboard.adapter;
 
 import android.content.Context;
+import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -106,10 +108,12 @@ public class KeyBoardAdapter extends BaseMultiItemQuickAdapter<KeyBoardItem, Bas
         });
     }
 
+    private Handler handler = new Handler();
+
     private void onDeleteClick(final BaseViewHolder baseViewHolder, View view, final int position) {
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent event) {
+            public boolean onTouch(final View view, MotionEvent event) {
                 thisEventTime = event.getEventTime();
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
@@ -119,10 +123,21 @@ public class KeyBoardAdapter extends BaseMultiItemQuickAdapter<KeyBoardItem, Bas
                             mOnItemClick.onClick(view, baseViewHolder.getLayoutPosition() - getHeaderLayoutCount());
                         }
                         baseViewHolder.setBackgroundRes(view.getId(), R.color.greySelectedText);
+                        // 长按操作，静止不动时的计时
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                isLongClicking = true;
+                                if (mOnItemLongClick != null) {
+                                    mOnItemLongClick.onLongClick(view, position, true);
+                                }
+                            }
+                        }, 500);
                         break;
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_CANCEL:
                         //手指抬起时停止发送
+                        handler.removeCallbacksAndMessages(null);
                         if (isLongClickModule) {
                             isLongClickModule = false;
                             isLongClicking = false;
@@ -138,6 +153,7 @@ public class KeyBoardAdapter extends BaseMultiItemQuickAdapter<KeyBoardItem, Bas
                         }
                         if (isLongClickModule && !isLongClicking) {
                             //长按事件,不停发送消息
+                            handler.removeCallbacksAndMessages(null);//取消静止不动时的计时
                             isLongClicking = true;
                             if (mOnItemLongClick != null) {
                                 mOnItemLongClick.onLongClick(view, position, true);

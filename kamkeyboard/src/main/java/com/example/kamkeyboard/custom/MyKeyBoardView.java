@@ -340,7 +340,7 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
                         msg.obj = v;
                         handler.sendMessage(msg);
                     }
-                }, 0, 100, TimeUnit.MILLISECONDS);    //每间隔100ms发送Message
+                }, 0, 50, TimeUnit.MILLISECONDS);    //每间隔100ms发送Message
             } else {
                 if (scheduledExecutor != null) {
                     scheduledExecutor.shutdownNow();
