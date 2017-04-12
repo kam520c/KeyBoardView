@@ -186,6 +186,7 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
             return;
         }
         String destText = editText.getText().toString();
+        destText = destText.substring(0, editText.getSelectionStart());
         editText.setFocusable(true);
         editText.setFocusableInTouchMode(true);
         editText.requestFocus();
@@ -205,7 +206,7 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
                         editable.insert(start, strChar);
                     }
                     break;
-                case (InputType.TYPE_NUMBER_FLAG_DECIMAL| InputType.TYPE_CLASS_NUMBER):
+                case (InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER):
                     //the number is decimal
                     if (isNum) {// if it is a num keyboard
                         if (numList.get(position).getItemType() == KeyBoardItem.NUM_IMG_BACK) {//back

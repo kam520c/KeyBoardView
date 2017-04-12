@@ -12,7 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:text="Hello World!"/>
+        android:inputType="numberDecimal"
+        android:text="12366.55"/>
 
     <com.example.kamkeyboard.custom.MyKeyBoardView
         android:id="@+id/keyboardView"

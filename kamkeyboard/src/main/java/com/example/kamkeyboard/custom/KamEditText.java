@@ -47,7 +47,6 @@ public class KamEditText extends EditText {
         setSelected(focused);
     }
 
-    //
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         requestFocus();
