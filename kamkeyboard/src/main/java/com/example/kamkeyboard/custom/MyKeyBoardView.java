@@ -189,7 +189,6 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
         editText.setFocusable(true);
         editText.setFocusableInTouchMode(true);
         editText.requestFocus();
-        editText.setSelection(editText.getText().toString().length());
         editable = editText.getText();
         start = editText.getSelectionStart();
 //        editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);//Testing for only number decimal allow

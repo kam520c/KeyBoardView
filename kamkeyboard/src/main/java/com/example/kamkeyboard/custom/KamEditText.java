@@ -2,13 +2,21 @@ package com.example.kamkeyboard.custom;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.text.InputType;
 import android.util.AttributeSet;
+import android.util.DebugUtils;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.EditText;
 
 import com.example.kamkeyboard.util.SystemUtil;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.lang.reflect.Method;
+
+import static android.R.attr.paddingLeft;
 
 
 /**
@@ -18,7 +26,6 @@ public class KamEditText extends EditText {
 
     public KamEditText(Context context) {
         this(context, null);
-        SystemUtil.closeKeyboard(this);
     }
 
     public KamEditText(Context context, AttributeSet attrs) {
@@ -27,6 +34,8 @@ public class KamEditText extends EditText {
 
     public KamEditText(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        SystemUtil.closeKeyboard(this);
+        this.setSelection(this.getText().length());
     }
 
     @Override
@@ -35,13 +44,22 @@ public class KamEditText extends EditText {
         if (focused) {//获取焦点时传递给键盘
             EventBus.getDefault().post(this);
         }
-        this.setSelection(this.getText().length());
+        setSelected(focused);
     }
 
+    //
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         requestFocus();
         requestFocusFromTouch();
+        float textSize = getTextSize() * getTextScaleX() / 2;
+        int selection = (int) ((event.getX() - getPaddingLeft()) / (textSize));
+        if (getText().length() > selection) {
+            setSelection(selection);
+        } else {
+            setSelection(getText().length());
+        }
         return true;
     }
+
 }
