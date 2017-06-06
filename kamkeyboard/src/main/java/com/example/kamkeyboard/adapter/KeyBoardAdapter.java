@@ -22,8 +22,9 @@ import java.util.concurrent.ScheduledExecutorService;
 public class KeyBoardAdapter extends BaseMultiItemQuickAdapter<KeyBoardItem, BaseViewHolder> {
     public boolean mIsUpper = false;// 是否大写
     public boolean mIsNum = false;// 是否数字
-    public OnItemClick mOnItemClick;
-    public OnItemLongClick mOnItemLongClick;
+    public onItemClick mOnItemClick;
+    public onItemLongClick mOnItemLongClick;
+    public onKeyClick mOnKeyClick;
     private ScheduledExecutorService scheduledExecutor;
     private long lastDownTime;
     private long thisEventTime;
@@ -39,10 +40,11 @@ public class KeyBoardAdapter extends BaseMultiItemQuickAdapter<KeyBoardItem, Bas
         this.mIsNum = mIsNum;
     }
 
-    public KeyBoardAdapter(Context context, List data, OnItemClick onItemClick, OnItemLongClick onItemLongClick) {
+    public KeyBoardAdapter(Context context, List data, onItemClick onItemClick, onItemLongClick onItemLongClick, onKeyClick onKeyClick) {
         super(data);
         this.mOnItemClick = onItemClick;
         this.mOnItemLongClick = onItemLongClick;
+        this.mOnKeyClick = onKeyClick;
         addItemType(KeyBoardItem.NUMBER, R.layout.item_keyboard_num);
         addItemType(KeyBoardItem.ALPHABET_NORMAL, R.layout.item_keyboard_alphabet_normal);
         addItemType(KeyBoardItem.ALPHABET_A, R.layout.item_keyboard_alphabet_a);
@@ -103,6 +105,9 @@ public class KeyBoardAdapter extends BaseMultiItemQuickAdapter<KeyBoardItem, Bas
             public void onClick(View v) {
                 if (mOnItemClick != null) {
                     mOnItemClick.onClick(v, baseViewHolder.getLayoutPosition() - getHeaderLayoutCount());
+                }
+                if (mOnKeyClick != null) {
+                    mOnKeyClick.onKeyClick(v);
                 }
             }
         });
@@ -175,11 +180,15 @@ public class KeyBoardAdapter extends BaseMultiItemQuickAdapter<KeyBoardItem, Bas
         return false;
     }
 
-    public interface OnItemClick {
+    public interface onItemClick {
         void onClick(View v, int position);
     }
 
-    public interface OnItemLongClick {
+    public interface onItemLongClick {
         void onLongClick(View v, int position, boolean isTouch);
+    }
+
+    public interface onKeyClick {
+        void onKeyClick(View v);
     }
 }

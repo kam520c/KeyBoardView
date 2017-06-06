@@ -11,13 +11,14 @@
     <com.example.kamkeyboard.custom.KamEditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
         android:inputType="numberDecimal"
-        android:text="12366.55"/>
+        android:padding="10dp"
+        android:text="1236"/>
 
     <com.example.kamkeyboard.custom.MyKeyBoardView
         android:id="@+id/keyboardView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        app:isNumOnly="true"/>
 
 </LinearLayout>

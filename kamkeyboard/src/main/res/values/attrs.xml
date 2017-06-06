@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MyKeyBoardView">
+        <attr name="isNumOnly" format="boolean"/>
+        <attr name="isAbcOnly" format="boolean"/>
+    </declare-styleable>
+
+</resources>

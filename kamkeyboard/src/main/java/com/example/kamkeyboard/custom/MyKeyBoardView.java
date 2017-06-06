@@ -1,6 +1,7 @@
 package com.example.kamkeyboard.custom;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.GridLayoutManager;
@@ -8,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputType;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -40,6 +42,8 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
 
     public boolean isNum = true;// 是否数字键盘
     public boolean isUpper = false;// 是否大写
+    public boolean isNumOnly = false;
+    public boolean isAbcOnly = false;
 
     private KeyBoardAdapter numKeyboardAdapter;
     private KeyBoardAdapter abcKeyboardAdapter;
@@ -49,6 +53,7 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
     Context mContext;
     View view;
     Pattern mPattern;
+    public onKeyClickListener mOnKeyListener;
 
     //小数点后的位数
     private static final int POINTER_LENGTH = 2;
@@ -62,6 +67,8 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
     TextView mTvKb123;
     TextView mTvKbChina;
 
+    LinearLayout linTitle;
+
     public MyKeyBoardView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
@@ -70,6 +77,13 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
         super(context, attrs);
         mContext = context;
         view = LayoutInflater.from(context).inflate(R.layout.view_keyboard, this);
+        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.MyKeyBoardView);
+        if (array.getBoolean(R.styleable.MyKeyBoardView_isNumOnly, false)) {
+            isNumOnly = true;
+        }
+        if (array.getBoolean(R.styleable.MyKeyBoardView_isAbcOnly, false)) {
+            isAbcOnly = true;
+        }
         initView();
     }
 
@@ -83,6 +97,7 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
 
     private void initView() {
         numKeyboardRecycleView = (RecyclerView) view.findViewById(R.id.rv_kb_num);
+        linTitle = (LinearLayout) view.findViewById(R.id.linTitle);
         mTvKbAbc = (TextView) view.findViewById(R.id.tv_kb_abc);
         mTvKb123 = (TextView) view.findViewById(R.id.tv_kb_123);
         mTvKbChina = (TextView) view.findViewById(R.id.tv_kb_china);
@@ -92,11 +107,10 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
         initDatas();
         // 实例化一个GridLayoutManager，列数为3
         layoutManagerNum = new GridLayoutManager(mContext, 3);
-        numKeyboardAdapter = new KeyBoardAdapter(mContext, numList, mOnItemClick, mOnItemLongClick);
+        numKeyboardAdapter = new KeyBoardAdapter(mContext, numList, mOnItemClick, mOnItemLongClick, mOnKeyClick);
         numKeyboardAdapter.setIsNum(true);
-
         layoutManagerABC = new GridLayoutManager(mContext, 366);
-        abcKeyboardAdapter = new KeyBoardAdapter(mContext, abcList, mOnItemClick, mOnItemLongClick);
+        abcKeyboardAdapter = new KeyBoardAdapter(mContext, abcList, mOnItemClick, mOnItemLongClick, mOnKeyClick);
         abcKeyboardAdapter.setIsNum(false);
         abcKeyboardAdapter.setSpanSizeLookup(new BaseQuickAdapter.SpanSizeLookup() {
             @Override
@@ -105,7 +119,6 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
             }
         });
         changeKeyboard();
-
     }
 
     private void changeKeyboard() {
@@ -115,12 +128,18 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
             mTvKbAbc.setSelected(false);
             mTvKb123.setSelected(true);
             mTvKbChina.setSelected(false);
+            if (isNumOnly) {
+                linTitle.setVisibility(View.GONE);
+            }
         } else {
             numKeyboardRecycleView.setLayoutManager(layoutManagerABC);
             numKeyboardRecycleView.setAdapter(abcKeyboardAdapter);
             mTvKbAbc.setSelected(true);
             mTvKb123.setSelected(false);
             mTvKbChina.setSelected(false);
+            if (isAbcOnly) {
+                linTitle.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -242,6 +261,14 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
         }
     }
 
+    private String getItemClickKey(View view) {
+        if (view instanceof TextView) {
+            return ((TextView) view).getText().toString();
+        } else {
+            return null;
+        }
+    }
+
     private void inputDeleteKeyBoard(Editable editable, int start) {
         if (editable != null && editable.length() > 0 && start > 0) {
             editable.delete(start - 1, start);
@@ -319,15 +346,34 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
         }
     }
 
-    private KeyBoardAdapter.OnItemClick mOnItemClick = new KeyBoardAdapter.OnItemClick() {
+    private KeyBoardAdapter.onItemClick mOnItemClick = new KeyBoardAdapter.onItemClick() {
         @Override
         public void onClick(View v, int position) {
             onClickNumber(v, position);
         }
     };
+
+    public KeyBoardAdapter.onKeyClick mOnKeyClick = new KeyBoardAdapter.onKeyClick() {
+        @Override
+        public void onKeyClick(View v) {
+            if (mOnKeyListener != null) {
+                mOnKeyListener.onKeyClick(getItemClickKey(v));
+            }
+        }
+    };
+
+    //获取key内容接口
+    public interface onKeyClickListener {
+        void onKeyClick(String str);
+    }
+
+    public void setOnKeyClickListener(onKeyClickListener listener) {
+        mOnKeyListener = listener;
+    }
+
     private ScheduledExecutorService scheduledExecutor;
 
-    private KeyBoardAdapter.OnItemLongClick mOnItemLongClick = new KeyBoardAdapter.OnItemLongClick() {
+    private KeyBoardAdapter.onItemLongClick mOnItemLongClick = new KeyBoardAdapter.onItemLongClick() {
         @Override
         public void onLongClick(final View v, final int position, final boolean isTouch) {
             if (isTouch) {

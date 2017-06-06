@@ -2,6 +2,10 @@ package com.kamkeyboard.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DebugUtils;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
 
 import com.example.kamkeyboard.custom.KamEditText;
 import com.example.kamkeyboard.custom.MyKeyBoardView;
@@ -20,6 +24,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         keyboardView = (MyKeyBoardView) findViewById(R.id.keyboardView);
         EventBus.getDefault().register(this);
+        keyboardView.setOnKeyClickListener(new MyKeyBoardView.onKeyClickListener() {
+            @Override
+            public void onKeyClick(String str) {
+                Log.e("===key", str+"");
+            }
+        });
     }
 
     @Override
