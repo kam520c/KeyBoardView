@@ -95,6 +95,10 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
         this.editText = editText;
     }
 
+    public EditText getEditText() {
+        return editText;
+    }
+
     private void initView() {
         numKeyboardRecycleView = (RecyclerView) view.findViewById(R.id.rv_kb_num);
         linTitle = (LinearLayout) view.findViewById(R.id.linTitle);
