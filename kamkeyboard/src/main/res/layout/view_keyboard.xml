@@ -34,6 +34,17 @@
             android:textSize="16sp"/>
 
         <TextView
+            android:id="@+id/tv_kb_char"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/selector_keyboard_type"
+            android:gravity="center"
+            android:text="@string/tv_kb_char"
+            android:textColor="@drawable/selector_keyboard_type_text"
+            android:textSize="16sp"/>
+
+        <TextView
             android:id="@+id/tv_kb_china"
             android:layout_width="0dp"
             android:layout_height="match_parent"

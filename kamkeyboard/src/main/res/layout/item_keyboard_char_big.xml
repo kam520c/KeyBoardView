@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tv_kb"
+    android:layout_width="match_parent"
+    android:layout_height="53dp"
+    android:background="@drawable/selector_keyboard_key_alphabet"
+    android:gravity="center"
+    android:layout_marginTop="11dp"
+    android:layout_marginBottom="11dp"
+    android:scaleType="center"
+    android:layout_marginLeft="6dp"
+    android:text="a"
+    android:layout_marginRight="6dp"
+    android:textSize="20sp" />

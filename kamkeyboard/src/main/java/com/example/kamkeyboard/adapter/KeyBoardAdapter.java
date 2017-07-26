@@ -2,7 +2,6 @@ package com.example.kamkeyboard.adapter;
 
 import android.content.Context;
 import android.os.Handler;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -22,6 +21,8 @@ import java.util.concurrent.ScheduledExecutorService;
 public class KeyBoardAdapter extends BaseMultiItemQuickAdapter<KeyBoardItem, BaseViewHolder> {
     public boolean mIsUpper = false;// 是否大写
     public boolean mIsNum = false;// 是否数字
+    public boolean mIsABC = false;// 是否字母键盘
+    public boolean mIsChar = false;// 是否字符键盘
     public onItemClick mOnItemClick;
     public onItemLongClick mOnItemLongClick;
     public onKeyClick mOnKeyClick;
@@ -36,8 +37,22 @@ public class KeyBoardAdapter extends BaseMultiItemQuickAdapter<KeyBoardItem, Bas
         mIsUpper = upper;
     }
 
-    public void setIsNum(boolean mIsNum) {
-        this.mIsNum = mIsNum;
+    public void setNumSelected() {
+        mIsNum = true;
+        mIsABC = false;
+        mIsChar = false;
+    }
+
+    public void setABCSelected() {
+        mIsABC = true;
+        mIsNum = false;
+        mIsChar = false;
+    }
+
+    public void setCharSelected() {
+        mIsChar = true;
+        mIsABC = false;
+        mIsNum = false;
     }
 
     public KeyBoardAdapter(Context context, List data, onItemClick onItemClick, onItemLongClick onItemLongClick, onKeyClick onKeyClick) {
@@ -46,6 +61,9 @@ public class KeyBoardAdapter extends BaseMultiItemQuickAdapter<KeyBoardItem, Bas
         this.mOnItemLongClick = onItemLongClick;
         this.mOnKeyClick = onKeyClick;
         addItemType(KeyBoardItem.NUMBER, R.layout.item_keyboard_num);
+        addItemType(KeyBoardItem.CAHR, R.layout.item_keyboard_alphabet_a);
+        addItemType(KeyBoardItem.CAHR_BIG, R.layout.item_keyboard_char_big);
+        addItemType(KeyBoardItem.CAHR_NORMAL, R.layout.item_keyboard_alphabet_normal);
         addItemType(KeyBoardItem.ALPHABET_NORMAL, R.layout.item_keyboard_alphabet_normal);
         addItemType(KeyBoardItem.ALPHABET_A, R.layout.item_keyboard_alphabet_a);
         addItemType(KeyBoardItem.IMG_CAPITAL, R.layout.item_keyboard_img_alphabet);
@@ -76,6 +94,15 @@ public class KeyBoardAdapter extends BaseMultiItemQuickAdapter<KeyBoardItem, Bas
                 }
                 break;
             case KeyBoardItem.NUMBER:
+                baseViewHolder.setText(R.id.tv_kb, item.getContent());
+                break;
+            case KeyBoardItem.CAHR_NORMAL:
+                baseViewHolder.setText(R.id.tv_kb, item.getContent());
+                break;
+            case KeyBoardItem.CAHR:
+                baseViewHolder.setText(R.id.tv_kb, item.getContent());
+                break;
+            case KeyBoardItem.CAHR_BIG:
                 baseViewHolder.setText(R.id.tv_kb, item.getContent());
                 break;
             default:

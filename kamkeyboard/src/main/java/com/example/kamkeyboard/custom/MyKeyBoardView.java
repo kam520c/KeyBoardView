@@ -31,24 +31,33 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.example.kamkeyboard.R.id.tv_kb_abc;
+
 
 /**
  * Created by Kam on 17/1/18.
  */
 
 public class MyKeyBoardView extends LinearLayout implements View.OnClickListener {
-    RecyclerView numKeyboardRecycleView;
+    RecyclerView keyboardRecycleView;
     EditText editText;
 
-    public boolean isNum = true;// 是否数字键盘
+    public boolean isNum = true;// 是否数字键盘,show numKeyboard in the begining
+    public boolean isABC = false;// 是否字母键盘
+    public boolean isChar = false;// 是否字符键盘
     public boolean isUpper = false;// 是否大写
-    public boolean isNumOnly = false;
-    public boolean isAbcOnly = false;
+    public boolean isShowNumKeyboard = false;
+    public boolean isShowAbcKeyboard = false;
+    public boolean isShowCharKeyboard = false;
+    public boolean isShowSystemKeyboard = false;
+    public boolean isKeyboardTitleGone = false;
 
     private KeyBoardAdapter numKeyboardAdapter;
     private KeyBoardAdapter abcKeyboardAdapter;
+    private KeyBoardAdapter charKeyboardAdapter;
     ArrayList<KeyBoardItem> numList = new ArrayList<>();
     ArrayList<KeyBoardItem> abcList = new ArrayList<>();
+    ArrayList<KeyBoardItem> charList = new ArrayList<>();
 
     Context mContext;
     View view;
@@ -62,9 +71,11 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
 
     GridLayoutManager layoutManagerNum;
     GridLayoutManager layoutManagerABC;
+    GridLayoutManager layoutManagerChar;
 
     TextView mTvKbAbc;
     TextView mTvKb123;
+    TextView mTvKbChar;
     TextView mTvKbChina;
 
     LinearLayout linTitle;
@@ -78,11 +89,35 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
         mContext = context;
         view = LayoutInflater.from(context).inflate(R.layout.view_keyboard, this);
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.MyKeyBoardView);
-        if (array.getBoolean(R.styleable.MyKeyBoardView_isNumOnly, false)) {
-            isNumOnly = true;
+        if (array.getBoolean(R.styleable.MyKeyBoardView_isNumKeyboardShow, false)) {
+            isShowNumKeyboard = true;
         }
-        if (array.getBoolean(R.styleable.MyKeyBoardView_isAbcOnly, false)) {
-            isAbcOnly = true;
+        if (array.getBoolean(R.styleable.MyKeyBoardView_isAbcKeyboardShow, false)) {
+            isShowAbcKeyboard = true;
+        }
+        if (array.getBoolean(R.styleable.MyKeyBoardView_isCharKeyboardShow, false)) {
+            isShowCharKeyboard = true;
+        }
+        if (array.getBoolean(R.styleable.MyKeyBoardView_isSystemKeyboardShow, false)) {
+            isShowSystemKeyboard = true;
+        }
+        if (array.getBoolean(R.styleable.MyKeyBoardView_isKeyboardTitleGone, false)) {
+            isKeyboardTitleGone = true;
+        }
+        if (array.getBoolean(R.styleable.MyKeyBoardView_initAbcKeyboard, false)) {
+            isNum = false;
+            isABC = true;
+            isChar = false;
+        }
+        if (array.getBoolean(R.styleable.MyKeyBoardView_initNumKeyboard, false)) {
+            isNum = true;
+            isABC = false;
+            isChar = false;
+        }
+        if (array.getBoolean(R.styleable.MyKeyBoardView_initCharKeyboard, false)) {
+            isNum = false;
+            isABC = false;
+            isChar = true;
         }
         initView();
     }
@@ -100,50 +135,87 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
     }
 
     private void initView() {
-        numKeyboardRecycleView = (RecyclerView) view.findViewById(R.id.rv_kb_num);
+        keyboardRecycleView = (RecyclerView) view.findViewById(R.id.rv_kb_num);
         linTitle = (LinearLayout) view.findViewById(R.id.linTitle);
-        mTvKbAbc = (TextView) view.findViewById(R.id.tv_kb_abc);
+        mTvKbAbc = (TextView) view.findViewById(tv_kb_abc);
         mTvKb123 = (TextView) view.findViewById(R.id.tv_kb_123);
+        mTvKbChar = (TextView) view.findViewById(R.id.tv_kb_char);
         mTvKbChina = (TextView) view.findViewById(R.id.tv_kb_china);
         mTvKbAbc.setOnClickListener(this);
         mTvKb123.setOnClickListener(this);
+        mTvKbChar.setOnClickListener(this);
         mTvKbChina.setOnClickListener(this);
         initDatas();
         // 实例化一个GridLayoutManager，列数为3
         layoutManagerNum = new GridLayoutManager(mContext, 3);
         numKeyboardAdapter = new KeyBoardAdapter(mContext, numList, mOnItemClick, mOnItemLongClick, mOnKeyClick);
-        numKeyboardAdapter.setIsNum(true);
+        numKeyboardAdapter.setNumSelected();
         layoutManagerABC = new GridLayoutManager(mContext, 366);
         abcKeyboardAdapter = new KeyBoardAdapter(mContext, abcList, mOnItemClick, mOnItemLongClick, mOnKeyClick);
-        abcKeyboardAdapter.setIsNum(false);
+        abcKeyboardAdapter.setABCSelected();
         abcKeyboardAdapter.setSpanSizeLookup(new BaseQuickAdapter.SpanSizeLookup() {
             @Override
             public int getSpanSize(GridLayoutManager gridLayoutManager, int position) {
                 return abcList.get(position).getSpanSize();
             }
         });
+        layoutManagerChar = new GridLayoutManager(mContext, 366);
+        charKeyboardAdapter = new KeyBoardAdapter(mContext, charList, mOnItemClick, mOnItemLongClick, mOnKeyClick);
+        charKeyboardAdapter.setCharSelected();
+        charKeyboardAdapter.setSpanSizeLookup(new BaseQuickAdapter.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(GridLayoutManager gridLayoutManager, int position) {
+                return charList.get(position).getSpanSize();
+            }
+        });
+        if (isShowAbcKeyboard) {
+            mTvKbAbc.setVisibility(View.VISIBLE);
+        } else {
+            mTvKbAbc.setVisibility(View.GONE);
+        }
+        if (isShowNumKeyboard) {
+            mTvKb123.setVisibility(View.VISIBLE);
+        } else {
+            mTvKb123.setVisibility(View.GONE);
+        }
+        if (isShowCharKeyboard) {
+            mTvKbChar.setVisibility(View.VISIBLE);
+        } else {
+            mTvKbChar.setVisibility(View.GONE);
+        }
+        if (isShowSystemKeyboard) {
+            mTvKbChina.setVisibility(View.VISIBLE);
+        } else {
+            mTvKbChina.setVisibility(View.GONE);
+        }
+        if ((!isShowAbcKeyboard && !isShowNumKeyboard && !isShowCharKeyboard && !isShowSystemKeyboard) || isKeyboardTitleGone) {
+            linTitle.setVisibility(View.GONE);
+        }
         changeKeyboard();
     }
 
     private void changeKeyboard() {
         if (isNum) {
-            numKeyboardRecycleView.setLayoutManager(layoutManagerNum);
-            numKeyboardRecycleView.setAdapter(numKeyboardAdapter);
+            keyboardRecycleView.setLayoutManager(layoutManagerNum);
+            keyboardRecycleView.setAdapter(numKeyboardAdapter);
             mTvKbAbc.setSelected(false);
             mTvKb123.setSelected(true);
+            mTvKbChar.setSelected(false);
             mTvKbChina.setSelected(false);
-            if (isNumOnly) {
-                linTitle.setVisibility(View.GONE);
-            }
-        } else {
-            numKeyboardRecycleView.setLayoutManager(layoutManagerABC);
-            numKeyboardRecycleView.setAdapter(abcKeyboardAdapter);
+        } else if (isABC) {
+            keyboardRecycleView.setLayoutManager(layoutManagerABC);
+            keyboardRecycleView.setAdapter(abcKeyboardAdapter);
             mTvKbAbc.setSelected(true);
             mTvKb123.setSelected(false);
+            mTvKbChar.setSelected(false);
             mTvKbChina.setSelected(false);
-            if (isAbcOnly) {
-                linTitle.setVisibility(View.GONE);
-            }
+        } else if (isChar) {
+            keyboardRecycleView.setLayoutManager(layoutManagerChar);
+            keyboardRecycleView.setAdapter(charKeyboardAdapter);
+            mTvKbAbc.setSelected(false);
+            mTvKb123.setSelected(false);
+            mTvKbChar.setSelected(true);
+            mTvKbChina.setSelected(false);
         }
     }
 
@@ -192,6 +264,47 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
         abcList.add(new KeyBoardItem(KeyBoardItem.ALPHABET_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "n"));
         abcList.add(new KeyBoardItem(KeyBoardItem.ALPHABET_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "m"));
         abcList.add(new KeyBoardItem(KeyBoardItem.ALPHABET_IMG_BACK, KeyBoardItem.IMG_SPAN_SIZE));
+
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "!"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "@"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "#"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "$"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "%"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "^"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "&"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "*"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "("));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, ")"));
+
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR, KeyBoardItem.IMG_SPAN_SIZE, "["));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "]"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "{"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "}"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "+"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "-"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "="));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "/"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "\\"));
+
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR, KeyBoardItem.IMG_SPAN_SIZE, "<"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, ">"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "<<"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, ">>"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "+"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "~"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "`"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "_"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "¥"));
+
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_BIG, KeyBoardItem.IMG_SPAN_SIZE, "."));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, ","));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "、"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "?"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "'"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, "\""));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, ":"));
+        charList.add(new KeyBoardItem(KeyBoardItem.CAHR_NORMAL, KeyBoardItem.ALPHABET_NORMAL_SPAN_SIZE, ";"));
+        charList.add(new KeyBoardItem(KeyBoardItem.ALPHABET_IMG_BACK, KeyBoardItem.IMG_SPAN_SIZE));
     }
 
     /**
@@ -255,11 +368,15 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
                     inputDeleteKeyBoard(editable, start);
                 } else {
                 }
-            } else {//alphabet keyboard
+            } else if (isABC) {//alphabet keyboard
                 if (abcList.get(position).getItemType() == KeyBoardItem.ALPHABET_IMG_BACK) {//back
                     inputDeleteKeyBoard(editable, start);
                 } else if (abcList.get(position).getItemType() == KeyBoardItem.IMG_CAPITAL) {//change capital
                     inputUpperKeyBoard();
+                }
+            } else if (isChar) {//char keyboard
+                if (charList.get(position).getItemType() == KeyBoardItem.ALPHABET_IMG_BACK) {//back
+                    inputDeleteKeyBoard(editable, start);
                 }
             }
         }
@@ -325,15 +442,26 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
     @Override
     public void onClick(View v) {
         int i = v.getId();
-        if (i == R.id.tv_kb_abc) {
-            if (isNum) {
+        if (i == tv_kb_abc) {
+            if (!isABC) {
                 isNum = false;
+                isABC = true;
+                isChar = false;
                 changeKeyboard();
             }
 
         } else if (i == R.id.tv_kb_123) {
             if (!isNum) {
                 isNum = true;
+                isABC = false;
+                isChar = false;
+                changeKeyboard();
+            }
+        } else if (i == R.id.tv_kb_char) {
+            if (!isChar) {
+                isNum = false;
+                isABC = false;
+                isChar = true;
                 changeKeyboard();
             }
 
@@ -343,10 +471,6 @@ public class MyKeyBoardView extends LinearLayout implements View.OnClickListener
             } else {
                 SystemUtil.openKeyboard(null, mContext);
             }
-//                mTvKbAbc.setSelected(false);
-//                mTvKb123.setSelected(false);
-//                mTvKbChina.setSelected(true);
-
         }
     }
 

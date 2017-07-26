@@ -11,13 +11,18 @@
     <com.example.kamkeyboard.custom.KamEditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
+        android:inputType="text"
         android:padding="10dp"
         android:text="1236"/>
 
     <com.example.kamkeyboard.custom.MyKeyBoardView
         android:id="@+id/keyboardView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <!--app:isNumOnly="true" 加上这句代表只显示num键盘，isAbcOnly为只显示字母键盘-->
+        android:layout_height="wrap_content"
+        app:initNumKeyboard="true"
+        app:isAbcKeyboardShow="true"
+        app:isCharKeyboardShow="true"
+        app:isNumKeyboardShow="true"
+        app:isSystemKeyboardShow="true"/>
+    <!--initNumKeyboard:show numKeyboard in the begining-->
 </LinearLayout>

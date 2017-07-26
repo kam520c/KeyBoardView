@@ -15,6 +15,9 @@ public class KeyBoardItem implements MultiItemEntity {
     public static final int NUM_IMG_BACK = 3;
     public static final int ALPHABET_IMG_BACK = 4;
     public static final int IMG_CAPITAL = 5;
+    public static final int CAHR_NORMAL = 6;
+    public static final int CAHR = 7;
+    public static final int CAHR_BIG = 8;
 
     public static final int ALPHABET_NORMAL_SPAN_SIZE = 36;
     public static final int IMG_SPAN_SIZE = 54;

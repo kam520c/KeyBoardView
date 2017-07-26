@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="MyKeyBoardView">
-        <attr name="isNumOnly" format="boolean"/>
-        <attr name="isAbcOnly" format="boolean"/>
+        <attr name="isNumKeyboardShow" format="boolean"/>
+        <attr name="isAbcKeyboardShow" format="boolean"/>
+        <attr name="isCharKeyboardShow" format="boolean"/>
+        <attr name="isSystemKeyboardShow" format="boolean"/>
+        <attr name="isKeyboardTitleGone" format="boolean"/>
+        <attr name="initNumKeyboard" format="boolean"/>
+        <attr name="initAbcKeyboard" format="boolean"/>
+        <attr name="initCharKeyboard" format="boolean"/>
     </declare-styleable>
-
 </resources>
