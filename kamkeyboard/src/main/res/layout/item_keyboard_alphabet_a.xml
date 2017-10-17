@@ -5,9 +5,9 @@
     android:layout_height="53dp"
     android:background="@drawable/selector_keyboard_key_alphabet"
     android:gravity="center"
-    android:layout_marginTop="11dp"
-    android:layout_marginBottom="11dp"
-    android:layout_marginLeft="26dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    android:layout_marginLeft="24dp"
     android:text="a"
-    android:layout_marginRight="6dp"
+    android:layout_marginRight="3dp"
     android:textSize="20sp" />

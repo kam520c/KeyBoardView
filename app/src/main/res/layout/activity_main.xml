@@ -18,7 +18,7 @@
     <com.example.kamkeyboard.custom.MyKeyBoardView
         android:id="@+id/keyboardView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="300dp"
         app:initNumKeyboard="true"
         app:isAbcKeyboardShow="true"
         app:isCharKeyboardShow="true"
