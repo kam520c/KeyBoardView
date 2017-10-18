@@ -1,5 +1,3 @@
 <resources>
     <string name="app_name">KamKeyboard</string>
-    <string name="tv_kb_china">keyboard</string>
-    <string name="tv_kb_char">char</string>
 </resources>

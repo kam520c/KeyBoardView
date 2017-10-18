@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">KamKeyboard</string>
     <string name="tv_kb_china">中</string>
     <string name="tv_kb_char">符号</string>
 </resources>
